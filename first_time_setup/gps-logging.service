@@ -1,0 +1,12 @@
+[Unit]
+Description=GPS Logging Service
+After=network.target
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User=hp
+ExecStart=/home/hp/gps_logger/start_gps_log.sh
+
+[Install]
+WantedBy=multi-user.target
