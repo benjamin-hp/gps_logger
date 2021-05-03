@@ -5,6 +5,7 @@ import io
 import datetime
 import csv
 import logging
+import socket
 
 from logging.handlers import RotatingFileHandler
 
@@ -16,13 +17,17 @@ sio = io.TextIOWrapper(io.BufferedRWPair(ser,ser))
 
 
 log_file = "gps_data.log"
+hostname = socket.gethostname()
+timestr = time.strftime("%Y%m%d-%H%M%S")
+filename = hostname + "_" + timestr + "_gps.log"
+print(filename) 
 
 logger = logging.getLogger("Rotating Log")
 logger.setLevel(logging.INFO)
 
     # add a rotating handler
-handler = RotatingFileHandler(log_file, maxBytes=200000,
-                                  backupCount=1)
+handler = RotatingFileHandler(filename, maxBytes=20000,
+                                  backupCount=2)
 logger.addHandler(handler)
 
 
@@ -64,15 +69,3 @@ while True:
     except:
         print("Keyboard Interrupt")
         break
-
-def create_rotating_log(path):
-    """
-    Creates a rotating log
-    """
-    logger = logging.getLogger("Rotating Log")
-    logger.setLevel(logging.INFO)
-    
-    # add a rotating handler
-    handler = RotatingFileHandler(path, maxBytes=20,
-                                  backupCount=5)
-    logger.addHandler(handler)
