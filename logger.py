@@ -9,12 +9,14 @@ import socket
 
 from logging.handlers import RotatingFileHandler
 
-
-ser = serial.Serial('/dev/ttyACM0',115200, timeout=1) #Tried with and without the last 3 parameters, and also at 1Mbps, same happens.
-ser.flushInput()
-ser.flushOutput()
-sio = io.TextIOWrapper(io.BufferedRWPair(ser,ser))
-
+try:
+    ser = serial.Serial('/dev/ttyACM0',115200, timeout=1) #Tried with and without the last 3 parameters, and also at 1Mbps, same happens.
+    ser.flushInput()
+    ser.flushOutput()
+    sio = io.TextIOWrapper(io.BufferedRWPair(ser,ser))
+except serial.SerialException as e:
+    print('Device error: {}'.format(e))
+    exit()
 
 log_file = "gps_data.log"
 hostname = socket.gethostname()
