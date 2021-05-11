@@ -21,15 +21,15 @@ except serial.SerialException as e:
 log_file = "gps_data.log"
 hostname = socket.gethostname()
 timestr = time.strftime("%Y%m%d-%H%M%S")
-filename = "/home/hp/gps_logger/logs/"+ hostname + "_" + timestr + "_gps.log"
+filename = "/home/hp/gps_logger/logs/"+ hostname +"_gps.log"
 print(filename) 
 
 logger = logging.getLogger("Rotating Log")
 logger.setLevel(logging.INFO)
 
     # add a rotating handler
-handler = RotatingFileHandler(filename, maxBytes=20000,
-                                  backupCount=2)
+handler = RotatingFileHandler(filename, maxBytes=200000000,
+                                  backupCount=5)
 logger.addHandler(handler)
 
 
@@ -48,17 +48,18 @@ while True:
             #print(msg.lat+msg.lat_dir)
             #print(msg.lon+msg.lon_dir)
             #print(repr(msg.gps_qual)+repr(msg.num_sats))
-            local_time = datetime.datetime.now().isoformat()
-            gps_time = msg.timestamp
-            gps_lat = msg.lat+msg.lat_dir
-            gps_lon =  msg.lon+msg.lon_dir
+            #local_time = datetime.datetime.now().isoformat()
+            #gps_time = msg.timestamp
+            #gps_lat = msg.lat+msg.lat_dir
+            #gps_lon =  msg.lon+msg.lon_dir
             #print(local_time)
             #print(gps_time)
             #print(gps_lat)
             #print(gps_lon)
             
-            logger.info("%s %s %s %s", local_time, gps_time, gps_lat, gps_lon)
-
+            #logger.info("%s %s %s %s", local_time, gps_time, gps_lat, gps_lon)
+            #logger.info("%s",local_time)
+            logger.info("%s",msg)
             #with open("test_data.csv","a") as f:
                 #writer = csv.writer(f,delimiter=",")
                 #writer.writerow([local_time,gps_time,gps_lat,gps_lon])
