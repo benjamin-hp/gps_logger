@@ -21,7 +21,7 @@ except serial.SerialException as e:
 log_file = "gps_data.log"
 hostname = socket.gethostname()
 timestr = time.strftime("%Y%m%d-%H%M%S")
-filename = "/home/hp/gps_logger/logs/"+ hostname +"_gps.log"
+filename = "/home/hp/gps_logger/logs/"+ hostname + "_" + timestr +"_gps.log"
 print(filename) 
 
 logger = logging.getLogger("Rotating Log")
@@ -29,7 +29,7 @@ logger.setLevel(logging.INFO)
 
     # add a rotating handler
 handler = RotatingFileHandler(filename, maxBytes=200000000,
-                                  backupCount=5)
+                                  backupCount=0)
 logger.addHandler(handler)
 
 
