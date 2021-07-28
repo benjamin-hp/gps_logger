@@ -68,7 +68,7 @@ while True:
         #print('-----------------------------------\n')
     except serial.SerialException as e:
         print('Device error: {}'.format(e))
-        break
+        #break
     except:
         print("Keyboard Interrupt")
-        break
+        #break
