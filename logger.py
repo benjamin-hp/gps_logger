@@ -8,6 +8,7 @@ import logging
 import socket
 
 from logging.handlers import RotatingFileHandler
+from datetime import datetime,timezone,date
 
 try:
     ser = serial.Serial('/dev/ttyACM0',115200, timeout=1) #Tried with and without the last 3 parameters, and also at 1Mbps, same happens.
@@ -20,8 +21,9 @@ except serial.SerialException as e:
 
 log_file = "gps_data.log"
 hostname = socket.gethostname()
+now_utc = datetime.now(timezone.utc)
 timestr = time.strftime("%Y%m%d-%H%M%S")
-filename = "/home/hp/gps_logger/logs/"+ hostname + "_" + timestr +"_gps.log"
+filename = "/home/hp/gps_logger/logs/"+ hostname + "_" + now_utc.strftime("%Y%m%d-%H%M%S") +"_gps.log"
 print(filename) 
 
 logger = logging.getLogger("Rotating Log")
@@ -35,6 +37,7 @@ logger.addHandler(handler)
 
 while True:
     try:
+        now_utc = datetime.now(timezone.utc)
         line = sio.readline()
         msg = pynmea2.parse(line)
         #print(repr(msg)) 
@@ -59,7 +62,7 @@ while True:
             
             #logger.info("%s %s %s %s", local_time, gps_time, gps_lat, gps_lon)
             #logger.info("%s",local_time)
-            logger.info("%s",msg)
+            logger.info("%s %s",now_utc, msg)
             #with open("test_data.csv","a") as f:
                 #writer = csv.writer(f,delimiter=",")
                 #writer.writerow([local_time,gps_time,gps_lat,gps_lon])
