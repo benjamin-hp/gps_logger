@@ -45,7 +45,7 @@ while True:
         msg = pynmea2.parse(line)
 
         if isinstance(msg, pynmea2.types.talker.GGA):
-            logger.info("%s,%s",iso_utc, msg)
+            logger.info("%s,%s",datetime.datetime.utcnow().isoformat(), msg)
     except serial.SerialException as e:
         print('Device error: {}'.format(e))
         #break
