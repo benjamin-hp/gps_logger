@@ -6,6 +6,7 @@ import datetime
 import csv
 import logging
 import socket
+import strict_rfc3339
 
 from logging.handlers import RotatingFileHandler
 from datetime import datetime,timezone,date
@@ -22,8 +23,12 @@ except serial.SerialException as e:
 log_file = "gps_data.log"
 hostname = socket.gethostname()
 now_utc = datetime.now(timezone.utc)
+iso_utc = now_utc.isoformat()
+iso_utc = iso_utc.replace(':', '')
+size = len(iso_utc)
+iso_utc = iso_utc[:size - 5]
 timestr = time.strftime("%Y%m%d-%H%M%S")
-filename = "/home/hp/gps_logger/logs/"+ hostname + "_" + now_utc.strftime("%Y%m%d-%H%M%S") +"_gps.log"
+filename = "/home/end/gps_logger/logs/"+ "gps_" + hostname + "_" + iso_utc +".csv"
 print(filename) 
 
 logger = logging.getLogger("Rotating Log")
@@ -38,37 +43,12 @@ logger.addHandler(handler)
 while True:
     try:
         now_utc = datetime.now(timezone.utc)
+        rfc_3339 = strict_rfc3339.now_to_rfc3339_utcoffset()
         line = sio.readline()
         msg = pynmea2.parse(line)
-        #print(repr(msg)) 
-        #print(repr(msg.timestamp))
-        #print(msg.latitude)
+
         if isinstance(msg, pynmea2.types.talker.GGA):
-            #print('GGA MSG:\n')
-            #print(repr(msg))
-            #print('GPS time:' + repr(msg.timestamp))
-            #print('System time:' + datetime.datetime.now().isoformat())
-            #print(msg.lat+msg.lat_dir)
-            #print(msg.lon+msg.lon_dir)
-            #print(repr(msg.gps_qual)+repr(msg.num_sats))
-            #local_time = datetime.datetime.now().isoformat()
-            #gps_time = msg.timestamp
-            #gps_lat = msg.lat+msg.lat_dir
-            #gps_lon =  msg.lon+msg.lon_dir
-            #print(local_time)
-            #print(gps_time)
-            #print(gps_lat)
-            #print(gps_lon)
-            
-            #logger.info("%s %s %s %s", local_time, gps_time, gps_lat, gps_lon)
-            #logger.info("%s",local_time)
-            logger.info("%s %s",now_utc, msg)
-            #with open("test_data.csv","a") as f:
-                #writer = csv.writer(f,delimiter=",")
-                #writer.writerow([local_time,gps_time,gps_lat,gps_lon])
-        #if isinstance(msg, pynmea2.types.talker.GLL):
-        #    print(repr(msg))
-        #print('-----------------------------------\n')
+            logger.info("%s,%s",rfc_3339, msg)
     except serial.SerialException as e:
         print('Device error: {}'.format(e))
         #break
