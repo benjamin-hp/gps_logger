@@ -6,10 +6,10 @@ import datetime
 import csv
 import logging
 import socket
-import strict_rfc3339
+
 
 from logging.handlers import RotatingFileHandler
-from datetime import datetime,timezone,date
+#from datetime import datetime,timezone,date
 
 try:
     ser = serial.Serial('/dev/ttyACM0',115200, timeout=1) #Tried with and without the last 3 parameters, and also at 1Mbps, same happens.
@@ -20,15 +20,12 @@ except serial.SerialException as e:
     print('Device error: {}'.format(e))
     exit()
 
-log_file = "gps_data.log"
+iso_utc = datetime.datetime.utcnow().isoformat().replace(':', '')
 hostname = socket.gethostname()
-now_utc = datetime.now(timezone.utc)
-iso_utc = now_utc.isoformat()
-iso_utc = iso_utc.replace(':', '')
-size = len(iso_utc)
-iso_utc = iso_utc[:size - 5]
-timestr = time.strftime("%Y%m%d-%H%M%S")
-filename = "/home/end/gps_logger/logs/"+ "gps_" + hostname + "_" + iso_utc +".csv"
+fleet_id = hostname[:len(hostname) - 9]
+hack_id = hostname[6:]
+filename = "/home/hp/gps_logger/logs/"+ "gps_"  + fleet_id + '_' + iso_utc + "_" + hack_id + '.csv'
+
 print(filename) 
 
 logger = logging.getLogger("Rotating Log")
@@ -42,13 +39,13 @@ logger.addHandler(handler)
 
 while True:
     try:
-        now_utc = datetime.now(timezone.utc)
-        rfc_3339 = strict_rfc3339.now_to_rfc3339_utcoffset()
+#         now_utc = datetime.now(timezone.utc)
+#        rfc_3339 = strict_rfc3339.now_to_rfc3339_utcoffset()
         line = sio.readline()
         msg = pynmea2.parse(line)
 
         if isinstance(msg, pynmea2.types.talker.GGA):
-            logger.info("%s,%s",rfc_3339, msg)
+            logger.info("%s,%s",iso_utc, msg)
     except serial.SerialException as e:
         print('Device error: {}'.format(e))
         #break
