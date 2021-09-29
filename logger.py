@@ -6,7 +6,7 @@ import datetime
 import csv
 import logging
 import socket
-
+from pathlib import Path
 
 from logging.handlers import RotatingFileHandler
 #from datetime import datetime,timezone,date
@@ -20,11 +20,12 @@ except serial.SerialException as e:
     print('Device error: {}'.format(e))
     exit()
 
+home = str(Path.home())
 iso_utc = datetime.datetime.utcnow().isoformat().replace(':', '')
 hostname = socket.gethostname()
 fleet_id = hostname[:len(hostname) - 9]
 hack_id = hostname[6:]
-filename = "/home/hp/gps_logger/logs/"+ "gps_"  + fleet_id + '_' + iso_utc + "_" + hack_id + '.csv'
+filename =home + "/gps_logger/logs/"+ "gps_"  + fleet_id + '_' + iso_utc + "_" + hack_id + '.csv'
 
 print(filename) 
 
